@@ -1,6 +1,25 @@
 import fetch from '../config/fetch'
 import {getStore} from '../config/mUtils'
 
+export const ddConfig = () => {
+	return new Promise(function(reslove, reject){
+		const data = {
+			agentId: '169284840',
+			corpId: 'ding31148f160c24897635c2f4657eb6378f',
+			timeStamp: '1522406302',	
+			nonceStr: 'hello',
+			signature: '2ee58283c92fba3f7eb2d3b45fb383b90a00fd01'
+		}
+		reslove(data)
+	})
+};
+
+export const getDdUserID = (code) => {
+	return new Promise(function(reslove, reject){
+		const userid = 123
+		reslove(userid)
+	})
+};
 /**
  * 获取首页默认地址
  */

@@ -43,7 +43,8 @@
 
 <script>
 import headTop from '../../components/header/head'
-import {cityGuess, hotcity, groupcity} from '../../service/getData'
+import {ddConfig, getDdUserID, cityGuess, hotcity, groupcity, rePostVerify} from '../../service/getData'
+import '../../plugins/dingtalk.min.js'
 
 export default {
     data(){
@@ -56,6 +57,8 @@ export default {
     },
 
 	mounted(){
+        //开始钉钉相关设置
+        this.startDD()
         // 获取当前城市
         cityGuess().then(res => {
             this.guessCity = res.name;
@@ -94,8 +97,50 @@ export default {
         //点击图标刷新页面
         reload(){
             window.location.reload();
+        },
+
+        startDD(corpid){
+            console.log('--startDD')
+            ddConfig().then(config => {
+                console.log(config)
+                config.jsApiList = [
+                    'runtime.info',
+                    'biz.user.get',
+                    'biz.contact.choose',
+                    'biz.telephone.call',
+                    'biz.ding.post'
+                ]
+                console.log(location.href)
+                dd.config(config);
+                dd.error(function(err) {
+                    alert('href is ' + location.href + ', dd error: ' + JSON.stringify(err));  
+                }); 
+                console.log('start ready')
+                dd.ready(function() {
+                    alert('--dd requestAuthCode')
+                    console.log('--dd requestAuthCode')
+                    dd.runtime.permission.requestAuthCode({
+                        corpId: config.corpid,
+                        onSuccess: function(result) {
+                            alert('--success result is ' + JSON.stringify(result))
+                            console.log('--success')
+                            console.log(result)
+                            const code = result.code
+                            //get userID by code
+                            getDdUserID(code).then(res => {
+                                console.log(res)
+                            })  
+                        },
+                        onFail : function(err) {
+                            console.log('--fail')
+                            //TODO: fail 处理
+                            console.log(err)
+                        }
+                    });
+                })
+            })
         }
-    },
+    }
 }
 
 </script>
